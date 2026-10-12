@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/", "destination": "/api/entry?__route=root" },
+    { "source": "/api/status", "destination": "/api/entry?__route=status" },
+    { "source": "/api/check", "destination": "/api/entry?__route=check" },
+    { "source": "/api/apply", "destination": "/api/entry?__route=apply" },
+    { "source": "/api/preview", "destination": "/api/entry?__route=preview" }
+  ]
+}

@@ -55,3 +55,13 @@ $env:DASHSCOPE_BASE_URL="你的 compatible-mode/v1 地址"
 3. 候选修改经服务端白名单验证，用户逐项接受或拒绝。
 4. 修改只落到工作副本，随后复检并产生新版本。
 5. 预览沿 `task → reward → item` 读取当前配置并执行领取规则。
+
+## 部署到 Vercel
+
+仓库已包含 `vercel.json` 和 Node.js Serverless Function 入口 `api/entry.js`。在 Vercel 导入 GitHub 仓库后，无需设置构建命令；添加以下 Production 环境变量即可：
+
+- `DASHSCOPE_API_KEY`：设为 Secret。
+- `QWEN_MODEL`：`qwen-plus`。
+- `DASHSCOPE_BASE_URL`：`https://dashscope.aliyuncs.com/compatible-mode/v1`。
+
+Vercel 入口只是适配层，规则、补丁和预览仍统一复用 `worker/index.js`，避免两套业务逻辑产生差异。
