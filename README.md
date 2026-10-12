@@ -1,6 +1,6 @@
 # TACTICAL CONFIG / 战术配置台
 
-用于 AI 产品经理面试演示的“游戏配置检查与修复 Agent”。确定性代码负责 CSV、规则、补丁与游戏执行；模型只负责需求语义核对，且不能直接修改配置。
+用于 AI 产品经理面试演示的“游戏配置检查与修复 Agent”。`Qwen-Plus` 负责需求语义核对；确定性程序负责 CSV、规则、引用、补丁与游戏执行，模型不能直接修改配置。
 
 ## 启动
 
@@ -18,14 +18,31 @@ npm run dev
 模型只在服务端读取密钥。PowerShell 本地启动示例：
 
 ```powershell
-$env:OPENAI_API_KEY="你的服务端密钥"
-$env:OPENAI_MODEL="gpt-5.5"
+$env:DASHSCOPE_API_KEY="你的阿里云百炼 API Key"
+$env:QWEN_MODEL="qwen-plus"
 npm run dev
 ```
 
-不要把密钥写入前端代码、CSV 或提交到 Git。未设置 `OPENAI_API_KEY` 时，确定性规则检查和内置演示需求契约仍可运行，页面会明确标记“AI 需求核对未运行”。
+默认调用北京地域默认业务空间的兼容接口。若使用其他地域或子业务空间，再设置：
 
-服务端使用 OpenAI Responses API 的 Structured Outputs。模型输出还会经过字段白名单、记录存在性、类型和业务范围校验；只有用户接受的补丁才会应用到工作副本。
+```powershell
+$env:DASHSCOPE_BASE_URL="你的 compatible-mode/v1 地址"
+```
+
+不要把密钥写入前端代码、CSV 或提交到 Git。未设置 `DASHSCOPE_API_KEY` 时，确定性规则检查和内置演示需求契约仍可运行，页面会明确标记“Qwen-Plus 未配置”。
+
+服务端使用阿里云百炼 OpenAI 兼容 Chat Completions 与 JSON Schema 结构化输出。模型输出还会经过字段白名单、记录存在性、类型和业务范围校验；只有用户接受的补丁才会应用到工作副本。
+
+## Agent 工具
+
+- `read_config`：读取三张配置表的真实数据。
+- `validate_config`：重复 ID、引用、类型与范围检查。
+- `find_references`：查看奖励影响了哪些任务。
+- `propose_patch`：验证候选修改并生成差异。
+- `apply_patch`：确认后修改工作副本。
+- `run_preview`：按指定配置执行完成任务与发奖。
+
+这些工具是 Worker 内的真实后端函数，并通过检查、应用和预览接口编排。项目只处理 CSV 与文字，不使用图片识别 API。
 
 ## 示例文件
 
