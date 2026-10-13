@@ -15,13 +15,15 @@ npm run dev
 
 ## 模型配置
 
-模型只在服务端读取密钥。PowerShell 本地启动示例：
+模型只在服务端读取密钥。若希望本机以后每次启动都自动连接，复制 `.env.example` 为不会提交到 Git 的 `.env.local`，填入一次即可：
 
 ```powershell
-$env:DASHSCOPE_API_KEY="你的阿里云百炼 API Key"
-$env:QWEN_MODEL="qwen-plus"
+Copy-Item .env.example .env.local
+# 编辑 .env.local，填写 DASHSCOPE_API_KEY
 npm run dev
 ```
+
+开发服务器会按 `.env.local` → `.env` → `.dev.vars` 的顺序自动读取，已存在的系统环境变量优先。线上部署由 Vercel 的 Production/Preview 环境变量自动注入，所以访问者每次打开站点都会直接连接，前端不保存也看不到密钥。
 
 默认调用北京地域默认业务空间的兼容接口。若使用其他地域或子业务空间，再设置：
 

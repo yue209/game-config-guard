@@ -121,7 +121,7 @@ async function modelReview(env, requirement, config) {
   const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 18000);
   try {
     const base = (env.DASHSCOPE_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1').replace(/\/$/,'');
-    const response = await fetch(`${base}/chat/completions`, { method:'POST', signal:controller.signal, headers:{'content-type':'application/json','authorization':`Bearer ${env.DASHSCOPE_API_KEY}`}, body:JSON.stringify({ model:env.QWEN_MODEL || 'qwen-plus', enable_thinking:false, messages:[{role:'system',content:'你是游戏配置语义审查器。只比较用户需求和给定配置。信息不足时必须要求澄清，禁止猜测。不要建议创建不存在的记录。只返回符合 schema 的内容。'},{role:'user',content:JSON.stringify({ requirement, config })}], response_format:{ type:'json_schema', json_schema:{ name:'config_review', strict:true, schema } } }) });
+    const response = await fetch(`${base}/chat/completions`, { method:'POST', signal:controller.signal, headers:{'content-type':'application/json','authorization':`Bearer ${env.DASHSCOPE_API_KEY}`}, body:JSON.stringify({ model:env.QWEN_MODEL || 'qwen-plus', enable_thinking:false, messages:[{role:'system',content:'你是游戏配置语义审查器。只比较用户需求和给定配置。当需求已经明确给出奖励数量或领取次数时，发现配置不一致必须直接返回 finding 和 suggested_value；这是供用户随后审查的候选修改，不要再次询问是否确认。只有需求本身缺少完成检查所必需的明确数值时，才设置 needs_clarification=true。禁止猜测缺失数值，不要建议创建不存在的记录。只返回符合 schema 的内容。'},{role:'user',content:JSON.stringify({ requirement, config })}], response_format:{ type:'json_schema', json_schema:{ name:'config_review', strict:true, schema } } }) });
     if (!response.ok) throw new Error(`DashScope API ${response.status}`);
     const data = await response.json();
     const parsed = JSON.parse(data.choices?.[0]?.message?.content || '{}');
