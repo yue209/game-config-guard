@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/", "destination": "/api/entry?__route=root" },
     { "source": "/api/status", "destination": "/api/entry?__route=status" },
